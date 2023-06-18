@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/_12sdp"
         android:fontFamily="@font/ubantu_bold"
         android:includeFontPadding="false"
-        android:text="PockiT"
+        android:text="Notes"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/_20ssp"
         app:layout_constraintTop_toTopOf="parent"
