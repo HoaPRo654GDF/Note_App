@@ -12,27 +12,36 @@ public class Note implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    //Đây là trường ID đại diện cho ID của ghi chú.
+    // Chúng ta sử dụng annotation @PrimaryKey(autoGenerate = true) để đánh dấu trường này là khóa chính và tự động tạo giá trị ID duy nhất cho mỗi ghi chú được chèn vào cơ sở dữ liệu.
 
     @ColumnInfo(name = "title")
     private String title;
+    //Đây là trường tiêu đề của ghi chú
 
     @ColumnInfo(name = "date_time")
     private String dateTime;
+    // Đây là trường thời gian và ngày của ghi chú.
 
     @ColumnInfo(name = "subtitle")
     private String subtitle;
+    //Đây là trường phụ đề của ghi chú.
 
     @ColumnInfo(name = "note_text")
     private String noteText;
+    //Đây là trường văn bản chính của ghi chú.
 
     @ColumnInfo(name = "image_path")
     private String imagePath;
+    //Đây là đường dẫn đến hình ảnh được đính kèm trong ghi chú.
 
     @ColumnInfo(name = "color")
     private String color;
+    //Đây là trường màu sắc của ghi chú
 
     @ColumnInfo(name = "web_link")
     private String webLink;
+    //Đây là trường liên kết web được liên kết với ghi chú.
 
     public int getId() {
         return id;
@@ -104,3 +113,19 @@ public class Note implements Serializable {
         return title + " : " + dateTime;
     }
 }
+
+
+//****Lớp Note là một lớp entity đại diện cho một ghi chú trong ứng dụng. Đây là nơi định nghĩa các trường
+// dữ liệu cho ghi chú và ánh xạ chúng với cột tương ứng trong bảng "notes" của cơ sở dữ liệu.****
+
+
+//Lớp Note cũng được chú thích bằng @Entity(tableName = "notes")
+// để xác định rằng nó là một entity và tên của bảng tương ứng trong cơ sở dữ liệu là "notes".
+
+//Lớp Note cũng triển khai ghi đè phương thức toString() để trả về một chuỗi biểu diễn của ghi chú,
+// bao gồm tiêu đề và thời gian.
+
+//Lớp Note được triển khai từ giao diện Serializable, cho phép đối tượng Note
+// có thể được chuyển đổi thành dạng byte để có thể gửi đi hoặc lưu trữ.
+
+

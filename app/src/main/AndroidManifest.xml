@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- là một khai báo được sử dụng để yêu cầu quyền truy cập đến bộ nhớ ngoài (external storage) trên thiết bị.-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application

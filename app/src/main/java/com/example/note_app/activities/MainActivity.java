@@ -40,17 +40,17 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NotesListener {
 
-    public static final int REQUEST_CODE_ADD_NOTE = 1; // for saving a note
-    public static final int REQUEST_CODE_UPDATE_NOTE = 2; // for updating note
-    public static final int REQUEST_CODE_SHOW_NOTES = 3; // for display notes
-    public static final int REQUEST_CODE_SELECT_IMAGE=4;
-    public static final int REQUEST_CODE_STORAGE_PERMISSION=5;
+    public static final int REQUEST_CODE_ADD_NOTE = 1; // để xác định request code khi thêm ghi chú mới.
+    public static final int REQUEST_CODE_UPDATE_NOTE = 2; // để xác định request code khi cập nhật ghi chú.
+    public static final int REQUEST_CODE_SHOW_NOTES = 3; // xác định request code khi hiển thị danh sách ghi chú.
+    public static final int REQUEST_CODE_SELECT_IMAGE=4; //để xác định request code khi chọn hình ảnh.
+    public static final int REQUEST_CODE_STORAGE_PERMISSION=5; //để xác định request code khi yêu cầu quyền truy cập vào bộ nhớ.
 
     private RecyclerView notesRecyclerView;
     private List<Note> noteList;
     private NotesAdapter notesAdapter;
 
-    private int noteClickedPosition = -1;
+    private int noteClickedPosition = -1; // để lưu vị trí ghi chú được chọn trong danh sách.
 
     private AlertDialog dialogAddURL;
 
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         setContentView(R.layout.activity_main);
 
         ImageView imageAddNoteMain = findViewById(R.id.imageAddNoteMain);
+        // xử lí sự kiện khi người dùng thêm ghi chú chính.
         imageAddNoteMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,39 +71,53 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
             }
         });
 
+        //Thiết lập giao diện RecyclerView.
         notesRecyclerView = findViewById(R.id.notesRecyclerView);
+        //Gắn một LayoutManager của StaggeredGridLayoutManager vào RecyclerView để hiển thị danh sách ghi chú theo kiểu dạng lưới.
         notesRecyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         );
 
+        //Khởi tạo một danh sách ghi chú rỗng (noteList) và một NotesAdapter để quản lý việc hiển thị danh sách ghi chú.
         noteList = new ArrayList<>();
         notesAdapter = new NotesAdapter(noteList, this);
+        //Gán notesAdapter cho RecyclerView để hiển thị danh sách ghi chú.
         notesRecyclerView.setAdapter(notesAdapter);
 
+        //Gọi phương thức getNotes() để lấy danh sách ghi chú từ cơ sở dữ liệu.
+        //Truyền REQUEST_CODE_SHOW_NOTES và false vào phương thức để chỉ định rằng yêu cầu lấy danh sách ghi chú là để hiển thị chúng.
         getNotes(REQUEST_CODE_SHOW_NOTES, false);
 
-        EditText inputSearch = findViewById(R.id.inputSearch);  // For SeachOperation
+
+        //Xử lí sự kiện tìm kiếm
+        EditText inputSearch = findViewById(R.id.inputSearch);
+
+        //Gắn một TextWatcher vào EditText để theo dõi sự thay đổi trong nội dung tìm kiếm.
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
+            // Được gọi trước khi văn bản trong EditText thay đổi
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
             @Override
+            //Được gọi khi văn bản trong EditText thay đổi.
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                //hủy bỏ bất kỳ công việc tìm kiếm trước đó đang chạy trên notesAdapter.
                 notesAdapter.cancelTimer();
             }
 
             @Override
+            //Được gọi sau khi văn bản trong EditText đã thay đổi
             public void afterTextChanged(Editable editable) {
                 if (noteList.size() != 0) {
+                    //tìm kiếm các ghi chú dựa trên văn bản mới đã thay đổi.
                     notesAdapter.searchNotes(editable.toString());
                 }
             }
         });
-        // End of EditText Operation Code
 
-        //quick Action AddNote
+        // xử lí sự kiện thêm ghi chú
         findViewById(R.id.imageAddNote).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                 );
             }
         });
-        // End AddNote
+       //
 
-        // quick action Image
+        // xử lí sự kiện thêm hình ảnh as creatNoteActivity 407
         findViewById(R.id.imageAddImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,38 +147,28 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                 }
             }
         });
-        //End Image
+        //End
 
-        //ADD url
+        //Xử lý sự kiện thêm đường dẫn web as creatNoteActivity 435
         findViewById(R.id.imageAddUrl).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddURLDialog();
             }
         });
-        // end url
+        // end
     }
-    // COPIED SELECT IMAGE
+    // As creatNoteActivity 543
     private  void selectImage()
     {      Log.d("MYLOG","Starting Select-Image ");
 
         Intent intent= new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE);
-         /*
-        Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-          if(intent.resolveActivity(getPackageManager()) != null)
-          {
-              Log.d("MYLOG","Start Activity For Result");
-
-              startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE);
-              Log.d("MYLOG","End Activity For Result =========");
-
-          }*/
     }
     // END
 
-    //permisson
+    //as createNoteActivity 554
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -173,14 +178,14 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 selectImage();
             }else{
-                Toast.makeText(this, " Permission Denied !!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, " Quyền bị từ chối !!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    //end permission
+    //end p
 
-    // Copied
+    // as CreateNoteActivity 626
     private  String getPathFromUri(Uri contentUri)
     {
         String filePath;
@@ -203,9 +208,12 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
     }
     //end
 
+
+    // xử lý sự kiện khi người dùng nhấp vào một ghi chú trong danh sách (onNoteClicked)
     @Override
     public void onNoteClicked(Note note, int position) {
 
+        // phương thức được gọi khi một ghi chú được nhấp vào trong danh sách. Nó lấy ghi chú và vị trí tương ứng của nó. Sau đó, nó tạo một Intent để chuyển đến CreateNoteActivity để xem hoặc cập nhật ghi chú. Dữ liệu ghi chú và trạng thái xem hoặc cập nhật được chuyển đi qua Intent bằng phương thức putExtra. Khi hoạt động CreateNoteActivity kết thúc, kết quả sẽ được trả về với mã yêu cầu REQUEST_CODE_UPDATE_NOTE.
         noteClickedPosition = position;
         Intent intent = new Intent(getApplicationContext(), CreateNoteActivity.class);
         intent.putExtra("isViewOrUpdate", true);
@@ -213,38 +221,45 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE);
     }
 
+    //lấy danh sách ghi chú từ cơ sở dữ liệu.
     private void getNotes(final int requestCode, final boolean isNoteDeleted) {
 
         @SuppressLint("StaticFieldLeak")
         class GetNotesTask extends AsyncTask<Void, Void, List<Note>> {
             @Override
+            //trong phương thức doInBackground, danh sách ghi chú được truy xuất từ cơ sở dữ liệu bằng cách sử dụng lớp NotesDatabase. Phương thức getAllNotes được gọi để truy vấn tất cả các ghi chú từ cơ sở dữ liệu.
             protected List<Note> doInBackground(Void... voids) {
                 return NotesDatabase
                         .getDatabase(getApplicationContext())
                         .noteDao().getAllNotes();
-                //  after completion of the this function List of notes will be generated
-                //    and that List will be passed to -> onPostExecute function
             }
 
             @Override
+            //phương thức onPostExecute được gọi với danh sách ghi chú nhận được từ doInBackground là tham số.
             protected void onPostExecute(List<Note> notes) {
                 super.onPostExecute(notes);
 
+                //Nếu requestCode là REQUEST_CODE_SHOW_NOTES, danh sách ghi chú được thêm vào danh sách hiện tại (noteList), và notesAdapter được thông báo để cập nhật giao diện hiển thị danh sách ghi chú.
                 if (requestCode == REQUEST_CODE_SHOW_NOTES) {
                     noteList.addAll(notes);
                     notesAdapter.notifyDataSetChanged();
 
-                } else if (requestCode == REQUEST_CODE_ADD_NOTE) {
+                }//Nếu requestCode là REQUEST_CODE_ADD_NOTE, ghi chú mới được thêm vào đầu danh sách (noteList), và notesAdapter được thông báo để cập nhật giao diện. Cuộn danh sách đến vị trí đầu tiên để hiển thị ghi chú mới.
+                else if (requestCode == REQUEST_CODE_ADD_NOTE) {
                     noteList.add(0, notes.get(0));
                     notesAdapter.notifyItemInserted(0);
                     notesRecyclerView.smoothScrollToPosition(0);
 
-                } else if (requestCode == REQUEST_CODE_UPDATE_NOTE) {
+                }
+                //Nếu requestCode là REQUEST_CODE_UPDATE_NOTE, ghi chú tại vị trí noteClickedPosition trong danh sách bị loại bỏ. Nếu isNoteDeleted là true, notesAdapter được thông báo rằng ghi chú đã bị xóa và giao diện được cập nhật.
+                else if (requestCode == REQUEST_CODE_UPDATE_NOTE) {
                     noteList.remove(noteClickedPosition);
 
                     if (isNoteDeleted) {
                         notesAdapter.notifyItemRemoved(noteClickedPosition);
-                    } else {
+                    }
+                    //Nếu không, ghi chú được chèn lại vào danh sách tại vị trí noteClickedPosition, và notesAdapter được thông báo để cập nhật giao diện với ghi chú đã được cập nhật.
+                    else {
                         noteList.add(noteClickedPosition, notes.get(noteClickedPosition));
                         notesAdapter.notifyItemChanged(noteClickedPosition);
                     }
@@ -256,17 +271,23 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         new GetNotesTask().execute();
     }
 
+    //Phương thức onActivityResult được gọi khi một hoạt động con kết thúc và trả về kết quả cho hoạt động gốc.
+    // sử dụng để xử lý kết quả trả về từ các hoạt động con để cập nhật danh sách ghi chú.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // kiểm tra xem hoạt động con đã trả về kết quả thành công và request code có phải là REQUEST_CODE_ADD_NOTE hay không. Nếu đúng, gọi hàm getNotes() để cập nhật danh sách ghi chú.
         if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
             getNotes(REQUEST_CODE_ADD_NOTE, false);
-        } else if (requestCode == REQUEST_CODE_UPDATE_NOTE && resultCode == RESULT_OK) {
+        }
+        //kiểm tra xem hoạt động con đã trả về kết quả thành công và request code có phải là REQUEST_CODE_UPDATE_NOTE hay không. Nếu đúng, kiểm tra xem Intent data có tồn tại hay không và lấy giá trị của trường boolean "isNoteDeleted" từ Intent. Sau đó, gọi hàm getNotes() để cập nhật danh sách ghi chú và truyền giá trị "isNoteDeleted" vào hàm.
+        else if (requestCode == REQUEST_CODE_UPDATE_NOTE && resultCode == RESULT_OK) {
             if (data != null) {
                 getNotes(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false));
             }
-        } // quick action
+        }
+        //kiểm tra xem hoạt động con đã trả về kết quả thành công và request code có phải là REQUEST_CODE_SELECT_IMAGE hay không. Nếu đúng, kiểm tra xem Intent data có tồn tại hay không và lấy Uri của hình ảnh được chọn. Nếu Uri tồn tại, lấy đường dẫn của hình ảnh bằng cách gọi hàm getPathFromUri().Sau đó, tạo một Intent mới để mở hoạt động CreateNoteActivity và truyền thông tin về loại quick action (isFromQuickActions và quickActionType) và đường dẫn hình ảnh (imagePath). Cuối cùng, gọi startActivityForResult() để bắt đầu hoạt động con và truyền request code REQUEST_CODE_ADD_NOTE.
         else if (requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK){
             if(data!=null)
             {
@@ -288,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         }
     }
 
+    //as CreateNoteActivity 655
     private void showAddURLDialog() {
         if (dialogAddURL == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -309,9 +331,9 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                 @Override
                 public void onClick(View view) {
                     if (inputURL.getText().toString().trim().isEmpty()) {
-                        Toast.makeText(MainActivity.this, "Enter URL", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Nhập URL", Toast.LENGTH_SHORT).show();
                     } else if (! Patterns.WEB_URL.matcher(inputURL.getText().toString()).matches()) {
-                        Toast.makeText(MainActivity.this, "Enter Valid URL", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "URL không hợp lệ", Toast.LENGTH_SHORT).show();
                     } else {
                        dialogAddURL.dismiss();
                         Intent intent=new Intent(getApplicationContext(),CreateNoteActivity.class);
